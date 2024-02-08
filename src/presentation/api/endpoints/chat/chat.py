@@ -35,9 +35,9 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-@chat_router.get("/{user_id}")
-async def get(user_id: int):
-    return HTMLResponse(get_html(user_id))
+@chat_router.get("/{sender_id}-{receiver_id}")
+async def get(sender_id: int, receiver_id: int):
+    return HTMLResponse(get_html(sender_id, receiver_id))
 
 
 def is_authenticated(data, sender_id) -> bool:

@@ -1,4 +1,4 @@
-def get_html(user_id: int) -> str:
+def get_html(sender_id: int, receiver_id: int) -> str:
     html = """
 <!DOCTYPE html>
 <html>
@@ -37,5 +37,5 @@ def get_html(user_id: int) -> str:
         </script>
     </body>
 </html>
-""" % (user_id, (user_id + 1) % 2, user_id)
+""" % (sender_id, receiver_id, sender_id)
     return html
