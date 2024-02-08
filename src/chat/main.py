@@ -34,6 +34,9 @@ def get_html(user_id: int) -> str:
             var client_id = Date.now()
             document.querySelector("#ws-id").textContent = client_id;
             var ws = new WebSocket(`ws://localhost:8000/ws/%d-%d`);
+            ws.onopen = function() {
+                ws.send("%d");
+            }
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
@@ -50,7 +53,7 @@ def get_html(user_id: int) -> str:
         </script>
     </body>
 </html>
-""" % (user_id, (user_id + 1) % 2)
+""" % (user_id, (user_id + 1) % 2, user_id)
     return html
 
 
@@ -95,6 +98,7 @@ async def dialogue(
     await manager.connect(sender_id, websocket)
     try:
         auth_data = await websocket.receive_text()
+        logger.info(f"auth_data={auth_data}")
 
         if not is_authenticated(int(auth_data), sender_id):
             logger.info(f"User {auth_data} did not pass authentication to enter chat {sender_id}-{receiver_id}")
