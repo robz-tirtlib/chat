@@ -2,59 +2,16 @@ from typing import Annotated
 
 import logging
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi import Depends, WebSocketException, status
 
+from src.presentation.api.templates.chat_page_generator import get_html
 
-logging.basicConfig(level=logging.DEBUG)
+
 logger = logging.getLogger(__name__)
 
-
-app = FastAPI()
-
-
-def get_html(user_id: int) -> str:
-    html = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <h2>Your ID: <span id="ws-id"></span></h2>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var client_id = Date.now()
-            document.querySelector("#ws-id").textContent = client_id;
-            var ws = new WebSocket(`ws://localhost:8000/ws/%d-%d`);
-            ws.onopen = function() {
-                ws.send("%d");
-            }
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-""" % (user_id, (user_id + 1) % 2, user_id)
-    return html
+chat_router = APIRouter(prefix="/chats")
 
 
 class ConnectionManager:
@@ -78,7 +35,7 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-@app.get("/{user_id}")
+@chat_router.get("/{user_id}")
 async def get(user_id: int):
     return HTMLResponse(get_html(user_id))
 
@@ -89,7 +46,7 @@ def is_authenticated(data, sender_id) -> bool:
 
 # TODO: change to token based auth
 
-@app.websocket("/ws/{sender_id}-{receiver_id}")
+@chat_router.websocket("/ws/{sender_id}-{receiver_id}")
 async def dialogue(
     websocket: WebSocket,
     sender_id: int,
