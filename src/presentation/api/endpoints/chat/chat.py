@@ -5,6 +5,7 @@ import logging
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi import Depends, WebSocketException, status
+
 from src.infrastructure.connection_manager import ConnectionManager
 
 from src.presentation.api.templates.chat_page_generator import get_html
