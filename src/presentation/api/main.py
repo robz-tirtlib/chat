@@ -29,6 +29,7 @@ from src.presentation.api.dependencies.get_user_db import get_user_db_stub
 from src.presentation.api.dependencies.connection_manager import (
     get_connection_manager,
 )
+from src.presentation.api.schemas.user import UserCreate, UserRead
 
 load_dotenv()
 
@@ -65,7 +66,7 @@ def configure_auth(app: FastAPI) -> None:
     cookie_transport = CookieTransport(
         cookie_secure=True,
         cookie_httponly=True,
-        cookie_samesite=True,  # It's prolly also worth it to impl CORS and Origin check in white list, but I'll leave it for now  # noqa
+        cookie_samesite="lax",  # It's prolly also worth it to impl CORS and Origin check in white list, but I'll leave it for now  # noqa
     )
     auth_backend = AuthenticationBackend(
         name="cookie",
@@ -83,8 +84,11 @@ def configure_auth(app: FastAPI) -> None:
         prefix="/auth/cookie",
         tags=["auth"],
     )
-
-    # TODO: include register router
+    app.include_router(
+        fastapi_users.get_register_router(UserRead, UserCreate),
+        prefix="/auth",
+        tags=["auth"]
+    )
 
 
 def create_app() -> FastAPI:
@@ -97,6 +101,7 @@ def create_app() -> FastAPI:
 async def run_api() -> None:
     app = create_app()
     await setup_dependencies(app)
+    configure_auth(app)
 
     # TODO: load config data (host, port etc.) from file/env
     config = uvicorn.Config(
