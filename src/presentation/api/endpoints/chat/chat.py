@@ -1,6 +1,6 @@
-from typing import Annotated
-
 import logging
+
+from typing import Annotated
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
@@ -24,38 +24,40 @@ async def get(sender_id: int, receiver_id: int):
     return HTMLResponse(get_html(sender_id, receiver_id))
 
 
+# TODO: change to cookie based auth
 def is_authenticated(data, sender_id) -> bool:
     return data == sender_id
 
 
-# TODO: change to token based auth
+# FIXME ?: resource id in ws route does not really make sense cuz
+# we can send it in payload. But is it actually bad to have resource id in route?
+# @chat_router.websocket("/ws/{sender_id}-{receiver_id}")
+# @chat_router.websocket("/ws/{dialogue_id}")
+# async def dialogue(
+#     websocket: WebSocket,
+#     dialogue_id: int,
+#     manager: Annotated[ConnectionManager, Depends(get_connection_manager)],
+# ):
+#     # TODO: sender_id from cookie
+#     await manager.connect(sender_id, websocket)
+#     try:
+#         auth_data = await websocket.receive_text()
 
-@chat_router.websocket("/ws/{sender_id}-{receiver_id}")
-async def dialogue(
-    websocket: WebSocket,
-    sender_id: int,
-    receiver_id: int,
-    manager: Annotated[ConnectionManager, Depends(get_connection_manager)],
-):
-    await manager.connect(sender_id, websocket)
-    try:
-        auth_data = await websocket.receive_text()
-        logger.info(f"auth_data={auth_data}")
+#         if not is_authenticated(int(auth_data), sender_id):
+#             logger.info(f"User {auth_data} did not pass authentication to \
+#                         enter chat {sender_id}-{receiver_id}")
+#             # FIXME: ws exception is not the right way to go here
+#             raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
 
-        if not is_authenticated(int(auth_data), sender_id):
-            logger.info(f"User {auth_data} did not pass authentication to \
-                        enter chat {sender_id}-{receiver_id}")
-            raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
+#         while True:
+#             data = await websocket.receive_text()
 
-        while True:
-            data = await websocket.receive_text()
-
-            # TODO: Store message in storage
-            await manager.send_personal_message(sender_id, data)
-            await manager.send_personal_message(receiver_id, data)
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        msg = f"{sender_id} has disconnected"
-        await manager.send_personal_message(receiver_id, msg)
-    except WebSocketException:
-        manager.disconnect(websocket)
+#             # TODO: Store message in storage
+#             await manager.send_personal_message(sender_id, data)
+#             await manager.send_personal_message(receiver_id, data)
+#     except WebSocketDisconnect:
+#         manager.disconnect(websocket)
+#         msg = f"{sender_id} has disconnected"
+#         await manager.send_personal_message(receiver_id, msg)
+#     except WebSocketException:
+#         manager.disconnect(websocket)
