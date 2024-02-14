@@ -1,2 +1,2 @@
-def get_user_db_stub():
+def get_user_by_token():
     raise NotImplementedError

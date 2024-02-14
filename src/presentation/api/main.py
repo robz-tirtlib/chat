@@ -23,13 +23,16 @@ from src.infrastructure.db.main import (
     get_engine, get_session_factory, get_user_db, get_database_strategy,
 )
 
+# TODO: all dependencies in one module
 from src.presentation.api.endpoints.chat.chat import chat_router
 from src.presentation.api.dependencies.get_session import get_session_stub
 from src.presentation.api.dependencies.get_user_db import get_user_db_stub
-from src.presentation.api.dependencies.connection_manager import (
-    get_connection_manager,
-)
+from src.presentation.api.dependencies.connection_manager import get_connection_manager  # noqa
+from src.presentation.api.dependencies.get_user_by_token import get_user_by_token  # noqa
 from src.presentation.api.schemas.user import UserCreate, UserRead
+
+from src.presentation.api.utils import get_user_from_cookie
+
 
 load_dotenv()
 
@@ -53,21 +56,19 @@ async def setup_dependencies(app: FastAPI) -> None:
 
     connection_manager = ConnectionManager()
 
+    # TODO: stub other deps to override in tests
     app.dependency_overrides.update(
         {
             get_connection_manager: singleton_conn_manager(connection_manager),
             get_session_stub: get_session,
             get_user_db_stub: get_user_db,
+            get_user_by_token: get_user_from_cookie,
         }
     )
 
 
-def configure_auth(app: FastAPI) -> None:
-    cookie_transport = CookieTransport(
-        cookie_secure=True,
-        cookie_httponly=True,
-        cookie_samesite="lax",  # It's prolly also worth it to impl CORS and Origin check in white list, but I'll leave it for now  # noqa
-    )
+def configure_auth(app: FastAPI):
+    cookie_transport = CookieTransport()  # It's prolly also worth it to impl CORS and Origin check in white list, but I'll leave it for now  # noqa
     auth_backend = AuthenticationBackend(
         name="cookie",
         transport=cookie_transport,
@@ -98,6 +99,7 @@ def create_app() -> FastAPI:
     return app
 
 
+# TODO: a bit messy here
 async def run_api() -> None:
     app = create_app()
     await setup_dependencies(app)
