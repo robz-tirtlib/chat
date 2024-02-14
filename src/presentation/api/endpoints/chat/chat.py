@@ -9,7 +9,7 @@ from fastapi import Depends, WebSocketException, status
 from src.infrastructure.connection_manager import ConnectionManager
 
 from src.presentation.api.templates.chat_page_generator import get_html
-from src.presentation.api.dependencies.connection_manager import (
+from src.presentation.api.dependencies.stubs import (
     get_connection_manager,
 )
 

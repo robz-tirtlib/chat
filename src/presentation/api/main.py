@@ -25,10 +25,10 @@ from src.infrastructure.db.main import (
 
 # TODO: all dependencies in one module
 from src.presentation.api.endpoints.chat.chat import chat_router
-from src.presentation.api.dependencies.get_session import get_session_stub
-from src.presentation.api.dependencies.get_user_db import get_user_db_stub
-from src.presentation.api.dependencies.connection_manager import get_connection_manager  # noqa
-from src.presentation.api.dependencies.get_user_by_token import get_user_by_token  # noqa
+from src.presentation.api.dependencies.stubs import (
+    get_session_stub, get_user_db_stub, get_connection_manager,
+    get_user_by_token,
+)
 from src.presentation.api.schemas.user import UserCreate, UserRead
 
 from src.presentation.api.utils import get_user_from_cookie

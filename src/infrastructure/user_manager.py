@@ -9,7 +9,7 @@ from fastapi_users import BaseUserManager, UUIDIDMixin
 
 from src.infrastructure.db.models.user import User
 
-from src.presentation.api.dependencies.get_user_db import get_user_db_stub
+from src.presentation.api.dependencies.stubs import get_user_db_stub
 
 
 # TODO: refac UserManager (DI secrets; methods logic)

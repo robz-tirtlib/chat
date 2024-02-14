@@ -18,7 +18,7 @@ from src.infrastructure.db.models import User
 from src.infrastructure.db.config import DBConfig
 from src.infrastructure.db.models.access_token import AccessToken
 
-from src.presentation.api.dependencies.get_session import get_session_stub
+from src.presentation.api.dependencies.stubs import get_session_stub
 
 
 async def get_engine(db_config: DBConfig) -> AsyncGenerator[AsyncEngine, None]:
