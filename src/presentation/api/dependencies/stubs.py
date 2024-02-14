@@ -15,5 +15,9 @@ def get_user_by_token():
     raise NotImplementedError
 
 
+def get_user_by_token_ws():
+    raise NotImplementedError
+
+
 def get_user_db_stub():
     raise NotImplementedError

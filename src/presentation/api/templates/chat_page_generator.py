@@ -1,4 +1,4 @@
-def get_html(sender_id: int, receiver_id: int) -> str:
+def get_html(dialogue_id: int) -> str:
     html = """
 <!DOCTYPE html>
 <html>
@@ -17,9 +17,9 @@ def get_html(sender_id: int, receiver_id: int) -> str:
         <script>
             var client_id = Date.now()
             document.querySelector("#ws-id").textContent = client_id;
-            var ws = new WebSocket(`ws://localhost:8000/chats/ws/%d-%d`);
+            var ws = new WebSocket(`ws://localhost:8000/chats/ws/%d`);
             ws.onopen = function() {
-                ws.send("%d");
+                ws.send("qq");
             }
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
@@ -37,5 +37,5 @@ def get_html(sender_id: int, receiver_id: int) -> str:
         </script>
     </body>
 </html>
-""" % (sender_id, receiver_id, sender_id)
+""" % (dialogue_id)
     return html
