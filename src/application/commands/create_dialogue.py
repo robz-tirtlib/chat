@@ -1,19 +1,21 @@
 from dataclasses import dataclass
 
+from uuid import UUID
+
 from src.application.interfaces.persistence.dialogue_repo import IDialogueRepo
 
 
 @dataclass
 class CreateDialogueDTO:
-    sender_id: str
-    receiver_id: str
+    sender_id: UUID
+    receiver_id: UUID
 
 
 class CreateDialogue:
     def __init__(self, dialogue_repo: IDialogueRepo) -> None:
         self._dialogue_repo = dialogue_repo
 
-    async def __call__(self, data: CreateDialogueDTO) -> str:
+    async def __call__(self, data: CreateDialogueDTO) -> UUID:
         # TODO: Prolly add smth like user privacy settings to restrict
         # dialogue creation
 
