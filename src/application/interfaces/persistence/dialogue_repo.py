@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 from uuid import UUID
 
+from src.application.dto.message import DialogueMessageDTO
+
 
 class IDialogueRepo(ABC):
     @abstractmethod
@@ -12,4 +14,12 @@ class IDialogueRepo(ABC):
     async def add_message(
             self, dialogue_id: UUID, sender_id: UUID, message_text: str,
     ) -> UUID:
+        ...
+
+    @abstractmethod
+    async def get_participants(self, dialogue_id: UUID) -> list[UUID]:
+        ...
+
+    @abstractmethod
+    async def get_message(self, message_id: UUID) -> DialogueMessageDTO:
         ...
