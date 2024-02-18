@@ -5,7 +5,7 @@ from uuid import UUID
 
 @dataclass
 class DialogueMessageDTO:
-    id: UUID
-    dialogue_id: UUID
+    id: int
+    dialogue_id: int
     sender_id: UUID
     message_text: str

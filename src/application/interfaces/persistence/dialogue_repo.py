@@ -8,21 +8,21 @@ from src.application.dto.dialogue import DialogueParticipants
 
 class IDialogueRepo(ABC):
     @abstractmethod
-    async def add_dialogue(self, user1_id: UUID, user2_id: UUID) -> UUID:
+    async def add_dialogue(self, user1_id: UUID, user2_id: UUID) -> int:
         ...
 
     @abstractmethod
     async def add_message(
-            self, dialogue_id: UUID, sender_id: UUID, message_text: str,
-    ) -> UUID:
+            self, dialogue_id: int, sender_id: UUID, message_text: str,
+    ) -> int:
         ...
 
     @abstractmethod
     async def get_participants(
-            self, dialogue_id: UUID,
+            self, dialogue_id: int,
     ) -> DialogueParticipants:
         ...
 
     @abstractmethod
-    async def get_message(self, message_id: UUID) -> DialogueMessageDTO:
+    async def get_message(self, message_id: int) -> DialogueMessageDTO:
         ...

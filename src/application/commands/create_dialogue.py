@@ -15,7 +15,7 @@ class CreateDialogue:
     def __init__(self, dialogue_repo: IDialogueRepo) -> None:
         self._dialogue_repo = dialogue_repo
 
-    async def __call__(self, data: CreateDialogueDTO) -> UUID:
+    async def __call__(self, data: CreateDialogueDTO) -> int:
         # TODO: Prolly add smth like user privacy settings to restrict
         # dialogue creation
 

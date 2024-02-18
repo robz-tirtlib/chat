@@ -11,7 +11,7 @@ from src.application.interfaces.persistence.dialogue_repo import IDialogueRepo
 
 @dataclass
 class SendDialogueMessageDTO:
-    dialogue_id: UUID
+    dialogue_id: int
     sender_id: UUID
     message_text: str
 
@@ -20,7 +20,7 @@ class SendDialogueMessage:
     def __init__(self, dialogue_repo: IDialogueRepo) -> None:
         self._dialogue_repo = dialogue_repo
 
-    async def __call__(self, data: SendDialogueMessageDTO) -> UUID:
+    async def __call__(self, data: SendDialogueMessageDTO) -> int:
         # TODO: Prolly add smth like user privacy settings to restrict
         # message sending
 

@@ -7,7 +7,7 @@ from src.application.dto.message import DialogueMessageDTO
 from src.application.dto.dialogue import DialogueParticipants
 from src.application.interfaces.persistence.dialogue_repo import IDialogueRepo
 
-from src.infrastructure.db.models.dialogue import Dialogue
+from src.infrastructure.db.models.dialogue import Dialogue, DialogueMessage
 
 
 class DialogueRepo(IDialogueRepo):
@@ -24,9 +24,15 @@ class DialogueRepo(IDialogueRepo):
         return res.scalar()
 
     async def add_message(
-            self, dialogue_id: UUID, sender_id: UUID, message_text: str,
-    ) -> UUID:
-        return await super().add_message(dialogue_id, sender_id, message_text)
+            self, dialogue_id: int, sender_id: UUID, text: str,
+    ) -> int:
+        stmnt = insert(DialogueMessage).values(
+            dialogue_id=dialogue_id, sender_id=sender_id,
+            text=text,
+        ).returning(DialogueMessage.id)
+
+        res = await self._session.execute(stmnt)
+        return res.scalar()
 
     async def get_participants(
             self, dialogue_id: UUID,
