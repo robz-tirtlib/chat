@@ -41,3 +41,6 @@ class DialogueRepo(IDialogueRepo):
 
     async def get_message(self, message_id: UUID) -> DialogueMessageDTO:
         return await super().get_message(message_id)
+
+    async def commit(self) -> None:
+        await self._session.commit()

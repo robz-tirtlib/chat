@@ -28,4 +28,6 @@ class SendDialogueMessage:
             data.dialogue_id, data.sender_id, data.message_text,
         )
 
+        await self._dialogue_repo.commit()
+
         return message_id

@@ -25,4 +25,6 @@ class CreateDialogue:
             data.sender_id, data.receiver_id,
         )
 
+        await self._dialogue_repo.commit()
+
         return dialogue_id

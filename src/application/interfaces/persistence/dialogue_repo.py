@@ -26,3 +26,7 @@ class IDialogueRepo(ABC):
     @abstractmethod
     async def get_message(self, message_id: int) -> DialogueMessageDTO:
         ...
+
+    @abstractmethod
+    async def commit(self) -> None:
+        ...
