@@ -19,6 +19,8 @@ class CreateDialogue:
         # TODO: Prolly add smth like user privacy settings to restrict
         # dialogue creation
 
+        # TODO: check if user with 'receiver_id' exists
+
         dialogue_id = await self._dialogue_repo.add_dialogue(
             data.sender_id, data.receiver_id,
         )

@@ -23,17 +23,19 @@ from src.infrastructure.db.main import (
     get_engine, get_session_factory, get_user_db, get_database_strategy,
 )
 
-# TODO: all dependencies in one module
 from src.presentation.api.endpoints.chat.chat import chat_router
 from src.presentation.api.dependencies.stubs import (
     get_session_stub, get_user_db_stub, get_connection_manager,
     get_user_by_token, get_user_by_token_ws,
 )
 from src.presentation.api.schemas.user import UserCreate, UserRead
+from src.presentation.interactor_factory import InteractorFactory
 
 from src.presentation.api.utils import (
     get_user_from_cookie, get_user_from_cookie_ws,
 )
+
+from src.main.ioc import IoC
 
 
 load_dotenv()
@@ -58,6 +60,8 @@ async def setup_dependencies(app: FastAPI) -> None:
 
     connection_manager = ConnectionManager()
 
+    ioc: InteractorFactory = IoC(session_factory)
+
     # TODO: stub other deps to override in tests
     app.dependency_overrides.update(
         {
@@ -66,6 +70,7 @@ async def setup_dependencies(app: FastAPI) -> None:
             get_user_db_stub: get_user_db,
             get_user_by_token_ws: get_user_from_cookie_ws,
             get_user_by_token: get_user_from_cookie,
+            InteractorFactory: lambda: ioc,
         }
     )
 

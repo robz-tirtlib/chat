@@ -17,7 +17,7 @@ class IDialogueRepo(ABC):
         ...
 
     @abstractmethod
-    async def get_participants(self, dialogue_id: UUID) -> list[UUID]:
+    async def get_participants(self, dialogue_id: UUID) -> list[UUID]:  # TODO: change output type # noqa
         ...
 
     @abstractmethod
