@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from uuid import UUID
 
 from src.application.dto.message import DialogueMessageDTO
+from src.application.dto.dialogue import DialogueParticipants
 
 
 class IDialogueRepo(ABC):
@@ -17,7 +18,9 @@ class IDialogueRepo(ABC):
         ...
 
     @abstractmethod
-    async def get_participants(self, dialogue_id: UUID) -> list[UUID]:  # TODO: change output type # noqa
+    async def get_participants(
+            self, dialogue_id: UUID,
+    ) -> DialogueParticipants:
         ...
 
     @abstractmethod

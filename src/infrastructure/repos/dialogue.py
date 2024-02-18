@@ -2,10 +2,12 @@ from uuid import UUID
 
 from sqlalchemy import insert
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.application.dto.message import DialogueMessageDTO
+from src.application.dto.dialogue import DialogueParticipants
+from src.application.interfaces.persistence.dialogue_repo import IDialogueRepo
 
 from src.infrastructure.db.models.dialogue import Dialogue
-from src.application.interfaces.persistence.dialogue_repo import IDialogueRepo
 
 
 class DialogueRepo(IDialogueRepo):
@@ -26,7 +28,9 @@ class DialogueRepo(IDialogueRepo):
     ) -> UUID:
         return await super().add_message(dialogue_id, sender_id, message_text)
 
-    async def get_participants(self, dialogue_id: UUID) -> list[UUID]:
+    async def get_participants(
+            self, dialogue_id: UUID,
+    ) -> DialogueParticipants:
         return await super().get_participants(dialogue_id)
 
     async def get_message(self, message_id: UUID) -> DialogueMessageDTO:

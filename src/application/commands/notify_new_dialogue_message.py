@@ -21,13 +21,15 @@ class NotifyNewDialogueMessage:
         self._notifier = notifier
 
     async def __call__(self, data: NotifyNewDialogueMessageDTO) -> None:
-        dialogue_users = await self._dialogue_repo.get_participants(
+        # TODO: what if there are less or more than 2 users?
+
+        users = await self._dialogue_repo.get_participants(
             data.dialogue_id)
 
         message = await self._dialogue_repo.get_message(data.message_id)
 
-        dialogue_users.remove(message.sender_id)
-        receiver_id = dialogue_users[0]
+        receiver_id = (users.user1_id if users.user2_id == message.sender_id
+                       else users.user2_id)
 
         await self._notifier.notify_new_message(
             message.sender_id, receiver_id, data.message_id,
