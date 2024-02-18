@@ -44,7 +44,7 @@ async def send_dialogue_message(
                 message_text=data.text,
             )
         )
-        return message_id
+        return {"message_id": message_id}
 
 
 @chat_router.post("/")  # TODO: describe status codes responses
