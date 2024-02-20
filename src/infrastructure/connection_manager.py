@@ -15,7 +15,7 @@ class ConnectionManager:
         self._conns[client_id] = websocket
 
     def disconnect(self, websocket: WebSocket):
-        for key in list(self._conns()):
+        for key in list(self._conns.keys()):
             if self._conns[key] == websocket:
                 del self._conns[key]
                 return

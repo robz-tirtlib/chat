@@ -2,16 +2,20 @@ import logging
 
 from typing import Annotated
 
-from fastapi import APIRouter
+from fastapi import (
+    APIRouter, WebSocket, WebSocketDisconnect, WebSocketException, Depends
+)
 from fastapi.responses import HTMLResponse
-from fastapi import Depends
 
 from src.application.commands.create_dialogue import CreateDialogueDTO
 from src.application.commands.send_dialogue_message import \
     SendDialogueMessageDTO
+from src.infrastructure.connection_manager import ConnectionManager
 
 from src.presentation.api.templates.chat_page_generator import get_html
-from src.presentation.api.dependencies.stubs import get_user_by_token
+from src.presentation.api.dependencies.stubs import (
+    get_connection_manager, get_user_by_token, get_user_by_token_ws,
+)
 
 from src.presentation.interactor_factory import InteractorFactory
 
@@ -60,3 +64,32 @@ async def create_dialogue(
             )
         )
         return {"dialogue_id": dialogue_id}
+
+
+@chat_router.websocket("/ws/{dialogue_id}")
+async def ws(
+    websocket: WebSocket,
+    dialogue_id: int,
+    manager: Annotated[ConnectionManager, Depends(get_connection_manager)],
+    ioc: Annotated[InteractorFactory, Depends()],
+    user=Depends(get_user_by_token_ws),
+):
+    await manager.connect(user.id, websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+
+            async with ioc.send_dialogue_message() as _send_dialogue_message:
+                message_id = await _send_dialogue_message(
+                    SendDialogueMessageDTO(
+                        dialogue_id=dialogue_id,
+                        sender_id=user.id,
+                        message_text=data,
+                    )
+                )
+            await manager.send_personal_message(user.id, str(message_id))
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+    except WebSocketException:
+        manager.disconnect(websocket)
