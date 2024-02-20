@@ -1,5 +1,7 @@
 import logging
 
+from uuid import UUID
+
 from fastapi import WebSocket
 
 
@@ -21,6 +23,11 @@ class ConnectionManager:
                 return
         logger.warning(f"Websocket {websocket} is already disconnected.")
 
-    async def send_personal_message(self, user_id: int, message: str):
-        if user_id in self._conns:
-            await self._conns[user_id].send_text(message)
+    async def notify_new_dialogue_message(
+        self, sender_id: UUID, receiver_id: UUID, message_id: int,
+        message_text: str,
+    ):
+        for user_id in sender_id, receiver_id:
+            if user_id in self._conns:
+                msg = f"Sent by {sender_id}: {message_text}"
+                await self._conns[user_id].send_text(msg)

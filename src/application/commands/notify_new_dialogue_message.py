@@ -31,7 +31,9 @@ class NotifyNewDialogueMessage:
         receiver_id = (users.user1_id if users.user2_id == message.sender_id
                        else users.user2_id)
 
-        await self._notifier.notify_new_message(
+        # TODO: send json like (sender_id, time_sent, text),
+        # not just plain text
+        await self._notifier.notify_new_dialogue_message(
             message.sender_id, receiver_id, data.message_id,
             message.message_text,
         )

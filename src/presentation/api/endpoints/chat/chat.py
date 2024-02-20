@@ -10,6 +10,9 @@ from fastapi.responses import HTMLResponse
 from src.application.commands.create_dialogue import CreateDialogueDTO
 from src.application.commands.send_dialogue_message import \
     SendDialogueMessageDTO
+from src.application.commands.notify_new_dialogue_message import \
+    NotifyNewDialogueMessageDTO
+
 from src.infrastructure.connection_manager import ConnectionManager
 
 from src.presentation.api.templates.chat_page_generator import get_html
@@ -88,7 +91,14 @@ async def ws(
                         message_text=data,
                     )
                 )
-            await manager.send_personal_message(user.id, str(message_id))
+
+            async with ioc.notify_new_dialogue_message(manager) as _command:
+                await _command(
+                    NotifyNewDialogueMessageDTO(
+                        dialogue_id=dialogue_id,
+                        message_id=message_id,
+                    )
+                )
     except WebSocketDisconnect:
         manager.disconnect(websocket)
     except WebSocketException:

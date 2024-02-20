@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dto.message import DialogueMessageDTO
@@ -37,10 +37,26 @@ class DialogueRepo(IDialogueRepo):
     async def get_participants(
             self, dialogue_id: UUID,
     ) -> DialogueParticipants:
-        return await super().get_participants(dialogue_id)
+        stmnt = select(Dialogue).where(Dialogue.id == dialogue_id)
+        res = await self._session.execute(stmnt)
+        dialogue = res.scalar()
+
+        return DialogueParticipants(
+            user1_id=dialogue.user1_id,
+            user2_id=dialogue.user2_id,
+        )
 
     async def get_message(self, message_id: UUID) -> DialogueMessageDTO:
-        return await super().get_message(message_id)
+        stmnt = select(DialogueMessage).where(DialogueMessage.id == message_id)
+        res = await self._session.execute(stmnt)
+        message = res.scalar()
+
+        return DialogueMessageDTO(
+            id=message.id,
+            dialogue_id=message.dialogue_id,
+            sender_id=message.sender_id,
+            message_text=message.text,
+        )
 
     async def commit(self) -> None:
         await self._session.commit()
