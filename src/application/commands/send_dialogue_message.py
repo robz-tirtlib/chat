@@ -1,7 +1,3 @@
-# Interactor
-# No Depends (to easily test). Just construct Interactor manually in
-# controller (request session or/and repo via Depends and inject them)
-
 from dataclasses import dataclass
 
 from uuid import UUID
